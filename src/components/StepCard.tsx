@@ -53,24 +53,26 @@ export const StepCard: React.FC<StepCardProps> = ({
     >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
         spacing={1}
-        sx={{ mb: 1.5 }}
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          mb: 1.5,
+        }}
       >
-        <Stack direction="row" spacing={1.25} alignItems="center">
+        <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
           <Chip
             label={`Шаг ${step.id}`}
             size="small"
             color={isStepCompleted ? 'primary' : 'default'}
             sx={{ fontWeight: 700, borderRadius: 1.5 }}
           />
-          <Typography variant="h6" fontWeight={700} sx={{ fontSize: '1.05rem' }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.05rem' }}>
             {step.title}
           </Typography>
         </Stack>
 
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           {isStepCompleted && (
             <Chip
               icon={<CheckCircleIcon />}
@@ -81,7 +83,7 @@ export const StepCard: React.FC<StepCardProps> = ({
               sx={{ fontWeight: 600 }}
             />
           )}
-          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
             {doneCount} из {totalItems}
           </Typography>
         </Stack>
@@ -98,7 +100,7 @@ export const StepCard: React.FC<StepCardProps> = ({
         }}
       />
 
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
         {step.description}
       </Typography>
 
@@ -112,9 +114,9 @@ export const StepCard: React.FC<StepCardProps> = ({
           borderColor: 'primary.main',
         }}
       >
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5 }}>
           <InfoOutlinedIcon sx={{ fontSize: 18, color: 'primary.dark' }} />
-          <Typography variant="caption" fontWeight={700} color="primary.dark">
+          <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.dark' }}>
             Почему это важно в вашем сценарии
           </Typography>
           {step.activeOverrideTag && (
@@ -126,7 +128,7 @@ export const StepCard: React.FC<StepCardProps> = ({
             />
           )}
         </Stack>
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body2" sx={{ color: 'text.primary' }}>
           {step.resolvedWhy}
         </Typography>
       </Box>
@@ -134,9 +136,14 @@ export const StepCard: React.FC<StepCardProps> = ({
       <Box sx={{ mb: step.recommendation ? 2 : 0 }}>
         <Typography
           variant="caption"
-          fontWeight={700}
-          color="text.secondary"
-          sx={{ display: 'block', mb: 0.75, textTransform: 'uppercase', letterSpacing: 0.5 }}
+          sx={{
+            fontWeight: 700,
+            color: 'text.secondary',
+            display: 'block',
+            mb: 0.75,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+          }}
         >
           Чек-лист документов и действий:
         </Typography>
@@ -187,13 +194,16 @@ export const StepCard: React.FC<StepCardProps> = ({
             gap: 1.5,
           }}
         >
-          <Stack direction="row" spacing={1.25} alignItems="flex-start">
+          <Stack direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
             <TipsAndUpdatesOutlinedIcon sx={{ fontSize: 20, color: '#B78103', mt: 0.2 }} />
             <Box>
-              <Typography variant="caption" fontWeight={700} sx={{ color: '#8C6200', display: 'block' }}>
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 700, color: '#8C6200', display: 'block' }}
+              >
                 Рекомендация банка · Экосистема «Своё Жильё»
               </Typography>
-              <Typography variant="body2" color="text.primary">
+              <Typography variant="body2" sx={{ color: 'text.primary' }}>
                 {step.recommendation.text}
               </Typography>
             </Box>

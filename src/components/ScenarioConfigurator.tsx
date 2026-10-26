@@ -113,9 +113,9 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
       }}
     >
       <Box sx={{ mb: 2.5 }}>
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.5 }}>
           <AutoAwesomeOutlinedIcon sx={{ color: 'primary.main', fontSize: 20 }} />
-          <Typography variant="subtitle2" fontWeight={700} color="text.secondary">
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary' }}>
             Быстрые сценарии:
           </Typography>
         </Stack>
@@ -157,9 +157,9 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
         }}
       >
         <Box>
-          <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1 }}>
+          <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', mb: 1 }}>
             <HomeWorkOutlinedIcon fontSize="small" color="action" />
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
               1. Тип объекта
             </Typography>
           </Stack>
@@ -184,9 +184,9 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
         </Box>
 
         <Box>
-          <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1 }}>
+          <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', mb: 1 }}>
             <FlagOutlinedIcon fontSize="small" color="action" />
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
               2. Цель
             </Typography>
           </Stack>
@@ -227,9 +227,9 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
         </Box>
 
         <Box>
-          <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1 }}>
+          <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', mb: 1 }}>
             <AccountBalanceWalletOutlinedIcon fontSize="small" color="action" />
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
               3. Финансирование
             </Typography>
           </Stack>
@@ -284,8 +284,8 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
           gap: 1,
         }}
       >
-        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-          <Typography variant="caption" color="text.secondary">
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             Активные теги маршрута:
           </Typography>
           <Chip size="small" label={TAG_LABELS[filter.object]} variant="outlined" />
@@ -293,7 +293,7 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
           <Chip size="small" label={TAG_LABELS[filter.finance]} variant="outlined" />
         </Stack>
 
-        <Typography variant="body2" fontWeight={600} color="primary.main">
+        <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
           Сформировано: {totalStages} этапов · {totalSteps} шагов
         </Typography>
       </Box>

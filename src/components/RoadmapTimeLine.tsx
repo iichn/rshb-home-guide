@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -32,6 +32,15 @@ export const RoadmapTimeline: React.FC<RoadmapTimelineProps> = ({
   onResetProgress,
 }) => {
   const [selectedStageId, setSelectedStageId] = useState<string | 'all'>('all');
+
+  useEffect(() => {
+    if (
+      selectedStageId !== 'all' &&
+      !stages.some((stage) => stage.id === selectedStageId)
+    ) {
+      setSelectedStageId('all');
+    }
+  }, [stages, selectedStageId]);
 
   const allChecklistKeys = stages.flatMap((stage) =>
     stage.steps.flatMap((step) =>
@@ -67,21 +76,23 @@ export const RoadmapTimeline: React.FC<RoadmapTimelineProps> = ({
       >
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'flex-start', sm: 'center' }}
           spacing={1}
-          sx={{ mb: 1.5 }}
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            mb: 1.5,
+          }}
         >
           <Box>
-            <Typography variant="subtitle1" fontWeight={700}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Общий прогресс по вашему маршруту
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               Отмечайте выполненные пункты в карточках шагов — прогресс пересчитывается автоматически
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
             <Chip
               label={`${completedChecklistCount} из ${totalChecklistCount} пунктов (${overallProgress}%)`}
               color={overallProgress === 100 ? 'primary' : 'default'}
@@ -181,8 +192,8 @@ export const RoadmapTimeline: React.FC<RoadmapTimelineProps> = ({
               />
 
               <Box sx={{ mb: 2 }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Typography variant="h5" fontWeight={800}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 800 }}>
                     {stage.title}
                   </Typography>
                   <Chip
@@ -199,7 +210,7 @@ export const RoadmapTimeline: React.FC<RoadmapTimelineProps> = ({
                     />
                   )}
                 </Stack>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
                   Цель этапа: {stage.goal}
                 </Typography>
               </Box>

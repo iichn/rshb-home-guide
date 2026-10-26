@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ThemeProvider,
   createTheme,
   CssBaseline,
-  Container,
   Box,
   Typography,
   Chip,
   Stack,
+  Container,
 } from '@mui/material';
 
 import type { ScenarioFilter } from './types/navigator';
@@ -36,14 +36,48 @@ const rshbTheme = createTheme({
   },
 });
 
+const STORAGE_KEY_FILTER = 'rshb_navigator_filter_v1';
+const STORAGE_KEY_COMPLETED = 'rshb_navigator_completed_v1';
+
 export function App() {
-  const [filter, setFilter] = useState<ScenarioFilter>({
-    object: 'house',
-    goal: 'build',
-    finance: 'rural',
+  const [filter, setFilter] = useState<ScenarioFilter>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_FILTER);
+      if (saved) return JSON.parse(saved) as ScenarioFilter;
+    } catch {
+      // ignore storage errors
+    }
+    return { object: 'house', goal: 'build', finance: 'rural' };
   });
 
-  const [completedItems, setCompletedItems] = useState<Set<string>>(() => new Set());
+  const [completedItems, setCompletedItems] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_COMPLETED);
+      if (saved) return new Set(JSON.parse(saved) as string[]);
+    } catch {
+      // ignore storage errors
+    }
+    return new Set();
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_FILTER, JSON.stringify(filter));
+    } catch {
+      // ignore storage errors
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY_COMPLETED,
+        JSON.stringify(Array.from(completedItems))
+      );
+    } catch {
+      // ignore storage errors
+    }
+  }, [completedItems]);
 
   const stages = useFilteredRoadmap(filter, ROADMAP_STAGES);
   const totalSteps = stages.reduce((acc, stage) => acc + stage.steps.length, 0);
@@ -70,7 +104,7 @@ export function App() {
       <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 } }}>
         <Container maxWidth="lg">
           <Box sx={{ mb: 3 }}>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1 }}>
               <Chip
                 label="Своё Жильё · РСХБ"
                 color="primary"
@@ -81,7 +115,7 @@ export function App() {
                 Интерактивный навигатор клиента
               </Typography>
             </Stack>
-            <Typography variant="h4" fontWeight={800} gutterBottom>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 800 }}>
               Путь к своему дому
             </Typography>
             <Typography variant="body1" color="text.secondary">
