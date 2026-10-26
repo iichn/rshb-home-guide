@@ -6,7 +6,6 @@ import {
   Container,
   Box,
   Typography,
-  Paper,
   Chip,
   Stack,
 } from '@mui/material';
@@ -15,6 +14,7 @@ import type { ScenarioFilter } from './types/navigator';
 import { ROADMAP_STAGES } from './data/roadmapData';
 import { useFilteredRoadmap } from './hooks/useFilteredRoadmap';
 import { ScenarioConfigurator } from './components/ScenarioConfigurator';
+import { RoadmapTimeline } from './components/RoadmapTimeline';
 
 const rshbTheme = createTheme({
   palette: {
@@ -43,8 +43,26 @@ export function App() {
     finance: 'rural',
   });
 
+  const [completedItems, setCompletedItems] = useState<Set<string>>(() => new Set());
+
   const stages = useFilteredRoadmap(filter, ROADMAP_STAGES);
   const totalSteps = stages.reduce((acc, stage) => acc + stage.steps.length, 0);
+
+  const handleToggleItem = (itemKey: string) => {
+    setCompletedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemKey)) {
+        next.delete(itemKey);
+      } else {
+        next.add(itemKey);
+      }
+      return next;
+    });
+  };
+
+  const handleResetProgress = () => {
+    setCompletedItems(new Set());
+  };
 
   return (
     <ThemeProvider theme={rshbTheme}>
@@ -79,32 +97,12 @@ export function App() {
             totalSteps={totalSteps}
           />
 
-          <Stack spacing={2}>
-            {stages.map((stage) => (
-              <Paper
-                key={stage.id}
-                elevation={0}
-                sx={{ p: 2.5, border: '1px solid', borderColor: 'divider' }}
-              >
-                <Typography variant="h6" fontWeight={700} gutterBottom>
-                  {stage.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  {stage.goal}
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {stage.steps.map((step) => (
-                    <Chip
-                      key={step.id}
-                      label={`${step.id} ${step.title}`}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ))}
-                </Box>
-              </Paper>
-            ))}
-          </Stack>
+          <RoadmapTimeline
+            stages={stages}
+            completedItems={completedItems}
+            onToggleItem={handleToggleItem}
+            onResetProgress={handleResetProgress}
+          />
         </Container>
       </Box>
     </ThemeProvider>
