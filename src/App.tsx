@@ -12,7 +12,7 @@ import {
 
 import type { ScenarioFilter } from './types/navigator';
 import { ROADMAP_STAGES } from './data/roadmapData';
-import { useFilteredRoadmap } from './hooks/useFilteredRoadmap';
+import { useFilteredRoadmap, isGoalAllowed, isFinanceAllowed } from './hooks/useFilteredRoadmap';
 import { ScenarioConfigurator } from './components/ScenarioConfigurator';
 import { RoadmapTimeline } from './components/RoadmapTimeline';
 
@@ -43,7 +43,16 @@ export function App() {
   const [filter, setFilter] = useState<ScenarioFilter>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_FILTER);
-      if (saved) return JSON.parse(saved) as ScenarioFilter;
+      if (saved) {
+        const p = JSON.parse(saved) as ScenarioFilter;
+        if (
+            ['apartment', 'house', 'plot'].includes(p.object) &&
+            ['ready', 'build', 'repair'].includes(p.goal) &&
+            ['rural', 'standard', 'own'].includes(p.finance) &&
+            isGoalAllowed(p.object, p.goal) &&
+            isFinanceAllowed(p.object, p.goal, p.finance)
+        ) return p;
+        }
     } catch {
       // ignore storage errors
     }
@@ -137,6 +146,9 @@ export function App() {
             onToggleItem={handleToggleItem}
             onResetProgress={handleResetProgress}
           />
+          <Typography variant="caption" sx={{ display: 'block', mt: 4, color: 'text.secondary' }}>
+            Прототип. Условия программ и лимиты вычетов сверяйте на сайтах банка и ФНС. Не является офертой.
+            </Typography>
         </Container>
       </Box>
     </ThemeProvider>

@@ -28,18 +28,25 @@ export function evaluateCond(cond: Cond | undefined, activeTags: Set<Tag>): bool
   return true;
 }
 
-export function isGoalAllowed(object: ObjectType, goal: GoalType): boolean {
-  if (object === 'plot' && goal === 'repair') return false;
-  return true;
+export function getGoalBlockReason(object: ObjectType, goal: GoalType): string | null {
+  if (object === 'plot' && goal === 'repair') return 'Для участка ремонт неприменим';
+  if (object === 'apartment' && goal === 'build') return 'Строительство возможно только для дома или участка';
+  return null;
 }
 
-export function isFinanceAllowed(object: ObjectType, goal: GoalType, finance: FinanceType): boolean {
-  if (finance === 'rural') {
-    if (object !== 'house') return false;
-    if (goal === 'repair') return false;
-  }
-  return true;
+export function getFinanceBlockReason(
+  object: ObjectType,
+  goal: GoalType,
+  finance: FinanceType
+): string | null {
+  if (goal === 'repair' && finance !== 'own') return 'На ремонт ипотека не предусмотрена — только свои средства';
+  if (finance === 'rural' && object !== 'house') return 'Сельская ипотека в навигаторе доступна только для частного дома';
+  return null;
 }
+
+export const isGoalAllowed = (o: ObjectType, g: GoalType) => getGoalBlockReason(o, g) === null;
+export const isFinanceAllowed = (o: ObjectType, g: GoalType, f: FinanceType) =>
+  getFinanceBlockReason(o, g, f) === null;
 
 export function filterRoadmap(
   filter: ScenarioFilter,

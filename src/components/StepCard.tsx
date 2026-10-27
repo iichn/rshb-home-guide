@@ -61,12 +61,6 @@ export const StepCard: React.FC<StepCardProps> = ({
         }}
       >
         <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-          <Chip
-            label={`Шаг ${step.id}`}
-            size="small"
-            color={isStepCompleted ? 'primary' : 'default'}
-            sx={{ fontWeight: 700, borderRadius: 1.5 }}
-          />
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.05rem' }}>
             {step.title}
           </Typography>
@@ -117,11 +111,11 @@ export const StepCard: React.FC<StepCardProps> = ({
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5 }}>
           <InfoOutlinedIcon sx={{ fontSize: 18, color: 'primary.dark' }} />
           <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.dark' }}>
-            Почему это важно в вашем сценарии
+            Почему это важно
           </Typography>
           {step.activeOverrideTag && (
             <Chip
-              label={`Специфика: ${TAG_LABELS[step.activeOverrideTag]}`}
+              label={`Важно для: ${TAG_LABELS[step.activeOverrideTag]}`}
               size="small"
               color="primary"
               sx={{ height: 20, fontSize: '0.7rem', fontWeight: 600 }}
@@ -134,19 +128,6 @@ export const StepCard: React.FC<StepCardProps> = ({
       </Box>
 
       <Box sx={{ mb: step.recommendation ? 2 : 0 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: 700,
-            color: 'text.secondary',
-            display: 'block',
-            mb: 0.75,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-          }}
-        >
-          Чек-лист документов и действий:
-        </Typography>
         <FormGroup>
           {step.checklist.map((itemText, idx) => {
             const itemKey = `${step.id}:${idx}`;
@@ -166,10 +147,11 @@ export const StepCard: React.FC<StepCardProps> = ({
                   <Typography
                     variant="body2"
                     sx={{
-                      textDecoration: checked ? 'line-through' : 'none',
-                      color: checked ? 'text.secondary' : 'text.primary',
+                        mt: '9px',
+                        textDecoration: checked ? 'line-through' : 'none',
+                        color: checked ? 'text.secondary' : 'text.primary',
                     }}
-                  >
+                    >
                     {itemText}
                   </Typography>
                 }
@@ -201,7 +183,7 @@ export const StepCard: React.FC<StepCardProps> = ({
                 variant="caption"
                 sx={{ fontWeight: 700, color: '#8C6200', display: 'block' }}
               >
-                Рекомендация банка · Экосистема «Своё Жильё»
+                Рекомендуем
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.primary' }}>
                 {step.recommendation.text}
@@ -226,7 +208,7 @@ export const StepCard: React.FC<StepCardProps> = ({
                 '&:hover': { textDecoration: 'underline' },
               }}
             >
-              Перейти на портал
+              Открыть ссылку
               <OpenInNewIcon sx={{ fontSize: 15 }} />
             </Link>
           )}

@@ -22,7 +22,7 @@ import type {
   ScenarioFilter,
 } from '../types/navigator';
 import { PRESETS, TAG_LABELS } from '../data/roadmapData';
-import { isFinanceAllowed, isGoalAllowed } from '../hooks/useFilteredRoadmap';
+import { getFinanceBlockReason, getGoalBlockReason, isFinanceAllowed, isGoalAllowed } from '../hooks/useFilteredRoadmap';
 
 interface ScenarioConfiguratorProps {
   filter: ScenarioFilter;
@@ -34,6 +34,14 @@ interface ScenarioConfiguratorProps {
 const OBJECT_OPTIONS: ObjectType[] = ['apartment', 'house', 'plot'];
 const GOAL_OPTIONS: GoalType[] = ['ready', 'build', 'repair'];
 const FINANCE_OPTIONS: FinanceType[] = ['rural', 'standard', 'own'];
+
+const plural = (n: number, [one, few, many]: [string, string, string]) => {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+  return many;
+};
 
 export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
   filter,
@@ -113,41 +121,49 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
       }}
     >
       <Box sx={{ mb: 2.5 }}>
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.5 }}>
-          <AutoAwesomeOutlinedIcon sx={{ color: 'primary.main', fontSize: 20 }} />
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-            Быстрые сценарии:
-          </Typography>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start', mb: 1.5 }}>
+        <AutoAwesomeOutlinedIcon sx={{ color: 'primary.main', fontSize: 20, mt: 0.25 }} />
+        <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            Готовые сценарии
+            </Typography>
+        </Box>
         </Stack>
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {PRESETS.map((preset) => {
             const isSelected = activePreset?.id === preset.id;
             return (
-              <Chip
+                <Tooltip
                 key={preset.id}
-                label={`${preset.id}. ${preset.name}`}
-                clickable
-                color={isSelected ? 'primary' : 'default'}
-                variant={isSelected ? 'filled' : 'outlined'}
-                onClick={() =>
-                  onChange({
-                    object: preset.object,
-                    goal: preset.goal,
-                    finance: preset.finance,
-                  })
-                }
-                sx={{
-                  fontWeight: isSelected ? 600 : 500,
-                  borderRadius: 2,
-                }}
-              />
+                arrow
+                title={`${TAG_LABELS[preset.object]} · ${TAG_LABELS[preset.goal]} · ${TAG_LABELS[preset.finance]}`}
+                >
+                <Chip
+                    label={preset.name}
+                    clickable
+                    color={isSelected ? 'primary' : 'default'}
+                    variant={isSelected ? 'filled' : 'outlined'}
+                    onClick={() =>
+                    onChange({
+                        object: preset.object,
+                        goal: preset.goal,
+                        finance: preset.finance,
+                    })
+                    }
+                    sx={{ fontWeight: isSelected ? 600 : 500, borderRadius: 2 }}
+                />
+                </Tooltip>
             );
-          })}
+            })}
         </Box>
       </Box>
 
-      <Divider sx={{ my: 2.5 }} />
+      <Divider sx={{ my: 2.5 }}>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            или настройте вручную
+        </Typography>
+        </Divider>
 
       <Box
         sx={{
@@ -199,29 +215,24 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
             onChange={handleGoalChange}
           >
             {GOAL_OPTIONS.map((goal) => {
-              const allowed = isGoalAllowed(filter.object, goal);
-              const button = (
+            const reason = getGoalBlockReason(filter.object, goal);
+            const button = (
                 <ToggleButton
-                  key={goal}
-                  value={goal}
-                  disabled={!allowed}
-                  sx={{ textTransform: 'none', fontWeight: 500, flex: 1 }}
+                key={goal}
+                value={goal}
+                disabled={!!reason}
+                sx={{ textTransform: 'none', fontWeight: 500, flex: 1 }}
                 >
-                  {TAG_LABELS[goal]}
+                {TAG_LABELS[goal]}
                 </ToggleButton>
-              );
-
-              return allowed ? (
-                button
-              ) : (
-                <Tooltip
-                  key={goal}
-                  title="Для земельного участка сценарий ремонта неприменим"
-                  arrow
-                >
-                  <span style={{ flex: 1, display: 'flex' }}>{button}</span>
+            );
+            return reason ? (
+                <Tooltip key={goal} title={reason} arrow>
+                <span style={{ flex: 1, display: 'flex' }}>{button}</span>
                 </Tooltip>
-              );
+            ) : (
+                button
+            );
             })}
           </ToggleButtonGroup>
         </Box>
@@ -242,30 +253,25 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
             onChange={handleFinanceChange}
           >
             {FINANCE_OPTIONS.map((fin) => {
-              const allowed = isFinanceAllowed(filter.object, filter.goal, fin);
-              const tooltipText =
-                filter.object !== 'house'
-                  ? 'В рамках MVP сельская ипотека доступна только для частного дома (ИЖС)'
-                  : 'Сельская ипотека не выдаётся на ремонт существующего жилья';
-
-              const button = (
+            const reason = getFinanceBlockReason(filter.object, filter.goal, fin);
+            const button = (
                 <ToggleButton
-                  key={fin}
-                  value={fin}
-                  disabled={!allowed}
-                  sx={{ textTransform: 'none', fontWeight: 500, flex: 1 }}
+                key={fin}
+                value={fin}
+                disabled={!!reason}
+                sx={{ textTransform: 'none', fontWeight: 500, flex: 1 }}
                 >
-                  {TAG_LABELS[fin]}
+                {TAG_LABELS[fin]}
                 </ToggleButton>
-              );
+            );
 
-              return allowed ? (
-                button
-              ) : (
-                <Tooltip key={fin} title={tooltipText} arrow>
-                  <span style={{ flex: 1, display: 'flex' }}>{button}</span>
+            return reason ? (
+                <Tooltip key={fin} title={reason} arrow>
+                <span style={{ flex: 1, display: 'flex' }}>{button}</span>
                 </Tooltip>
-              );
+            ) : (
+                button
+            );
             })}
           </ToggleButtonGroup>
         </Box>
@@ -294,7 +300,7 @@ export const ScenarioConfigurator: React.FC<ScenarioConfiguratorProps> = ({
         </Stack>
 
         <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-          Сформировано: {totalStages} этапов · {totalSteps} шагов
+          Сформировано: {totalStages} {plural(totalStages, ['этап', 'этапа', 'этапов'])} · {totalSteps} {plural(totalSteps, ['шаг', 'шага', 'шагов'])}
         </Typography>
       </Box>
     </Paper>

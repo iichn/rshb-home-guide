@@ -103,7 +103,7 @@ export const RoadmapTimeline: React.FC<RoadmapTimelineProps> = ({
                 size="small"
                 color="inherit"
                 startIcon={<RestartAltIcon />}
-                onClick={onResetProgress}
+                onClick={() => window.confirm('Сбросить прогресс?') && onResetProgress()}
                 sx={{ textTransform: 'none', color: 'text.secondary' }}
               >
                 Сбросить
