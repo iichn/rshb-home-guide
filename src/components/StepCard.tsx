@@ -115,7 +115,7 @@ export const StepCard: React.FC<StepCardProps> = ({
           </Typography>
           {step.activeOverrideTag && (
             <Chip
-              label={`Важно для: ${TAG_LABELS[step.activeOverrideTag]}`}
+              label={`для: ${TAG_LABELS[step.activeOverrideTag]}`}
               size="small"
               color="primary"
               sx={{ height: 20, fontSize: '0.7rem', fontWeight: 600 }}
